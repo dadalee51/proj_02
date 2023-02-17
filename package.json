@@ -1,15 +1,15 @@
 {
-  "name": "proj_01",
+  "name": "proj_02",
   "version": "1.0.0",
   "description": "starter project with mongodb from tigo robotics",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node app.js",
     "test": "echo 'no test'"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dadalee51/proj_01.git"
+    "url": "git+https://github.com/dadalee51/proj_02.git"
   },
   "keywords": [
     "tigo",
@@ -19,11 +19,10 @@
   "author": "tigo.robotics 2023",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/dadalee51/proj_01/issues"
+    "url": "https://github.com/dadalee51/proj_02/issues"
   },
-  "homepage": "https://github.com/dadalee51/proj_01#readme",
+  "homepage": "https://github.com/dadalee51/proj_02#readme",
   "dependencies": {
-    "cors": "^2.8.5",
     "express": "^4.18.2",
     "mongo": "^0.1.0",
     "mongodb": "3.6"

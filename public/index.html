@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Security-Policy"
+  content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
+<html>
+<script note="helper functions">clog = (a) => console.log(a);</script>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Robot Location Tracking</title>
+  <script src="alpine.js"></script>
+  <link href="bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div x-data="{
+    coord_number: '',
+    timestamp: '',
+    longitude: '',
+    lattitude: '',
+    coords: []
+  }">
+    <div x-init="$watch(Alpine.store('coords',coords))">
+      <form x-on:submit.prevent="addCoord">
+        <label for="coord_number">Coordinate Number:</label>
+        <input type="text" x-model="coord_number" id="coord_number">
+        <label for="timestamp">Timestamp:</label>
+        <input type="text" x-model="timestamp" id="timestamp">
+        <label for="longitude">Longitude:</label>
+        <input type="text" x-model="longitude" id="longitude">
+        <label for="lattitude">Lattitude:</label>
+        <input type="text" x-model="lattitude" id="lattitude">
+        <button type="submit">Add Coordinate</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Coordinate Number</th>
+            <th>Timestamp</th>
+            <th>Longitude</th>
+            <th>Lattitude</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="(coord, index) in Alpine.store('coords')" :key="index">
+            <tr>
+              <td x-text="coord.coord_number"></td>
+              <td x-text="coord.timestamp"></td>
+              <td x-text="coord.longitude"></td>
+              <td x-text="coord.lattitude"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    Alpine.store('coords', []);
+    getCoords();
+
+    async function addCoord() {
+      const coord_number = document.querySelector('#coord_number').value
+      const timestamp = document.querySelector('#timestamp').value
+      const longitude = document.querySelector('#longitude').value
+      const lattitude = document.querySelector('#lattitude').value
+
+      const data = {
+        coord_number,
+        timestamp,
+        longitude,
+        lattitude
+      }
+      const response = await fetch('/api/coord', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+
+      if (!response.ok) {
+        console.error(response.statusText)
+        return
+      }
+
+      document.querySelector('#coord_number').value = ''
+      document.querySelector('#timestamp').value = ''
+      document.querySelector('#longitude').value = ''
+      document.querySelector('#lattitude').value = ''
+
+      getCoords()
+    }
+
+    async function getCoords() {
+      const response = await fetch('/api/coord', {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'}
+      })
+
+      if (!response.ok) {
+        console.error(response.statusText)
+        return
+      }
+      const data = await response.json()
+      Alpine.store('coords', data);
+    }
+  </script>
+</body>
+</html>
