@@ -6,46 +6,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Robot Location Tracking</title>
+  <title>Student credit system</title>
   <script src="alpine.js"></script>
   <link href="bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
   <div x-data="{
-    coord_number: '',
+    student_number: '',
     timestamp: '',
-    longitude: '',
-    lattitude: '',
-    coords: []
+    total_credits: '',
+    student_name: '',
+    credits: []
   }">
-    <div x-init="$watch(Alpine.store('coords',coords))">
-      <form x-on:submit.prevent="addCoord">
-        <label for="coord_number">Coordinate Number:</label>
-        <input type="text" x-model="coord_number" id="coord_number">
+    <div x-init="$watch(Alpine.store('credits',credits))">
+      <form x-on:submit.prevent="addCredit">
+        <label for="student_number">student Number:</label>
+        <input type="text" x-model="student_number" id="student_number">
         <label for="timestamp">Timestamp:</label>
         <input type="text" x-model="timestamp" id="timestamp">
-        <label for="longitude">Longitude:</label>
-        <input type="text" x-model="longitude" id="longitude">
-        <label for="lattitude">Lattitude:</label>
-        <input type="text" x-model="lattitude" id="lattitude">
-        <button type="submit">Add Coordinate</button>
+        <label for="total_credits">total_credits:</label>
+        <input type="text" x-model="total_credits" id="total_credits">
+        <label for="student_name">student_name:</label>
+        <input type="text" x-model="student_name" id="student_name">
+        <button type="submit">Add student</button>
       </form>
       <table>
         <thead>
           <tr>
-            <th>Coordinate Number</th>
+            <th>student Number</th>
             <th>Timestamp</th>
-            <th>Longitude</th>
-            <th>Lattitude</th>
+            <th>total_credits</th>
+            <th>student_name</th>
           </tr>
         </thead>
         <tbody>
-          <template x-for="(coord, index) in Alpine.store('coords')" :key="index">
+          <template x-for="(credit, index) in Alpine.store('credits')" :key="index">
             <tr>
-              <td x-text="coord.coord_number"></td>
-              <td x-text="coord.timestamp"></td>
-              <td x-text="coord.longitude"></td>
-              <td x-text="coord.lattitude"></td>
+              <td x-text="credit.student_number"></td>
+              <td x-text="credit.timestamp"></td>
+              <td x-text="credit.total_credits"></td>
+              <td x-text="credit.student_name"></td>
+              <td><button x-on:click="deleteStudent(credit)">Delete</button></td>
             </tr>
           </template>
         </tbody>
@@ -53,22 +54,22 @@
     </div>
   </div>
   <script>
-    Alpine.store('coords', []);
-    getCoords();
+    Alpine.store('credits', []);
+    getcredits();
 
-    async function addCoord() {
-      const coord_number = document.querySelector('#coord_number').value
+    async function addCredit() {
+      const student_number = document.querySelector('#student_number').value
       const timestamp = document.querySelector('#timestamp').value
-      const longitude = document.querySelector('#longitude').value
-      const lattitude = document.querySelector('#lattitude').value
+      const total_credits = document.querySelector('#total_credits').value
+      const student_name = document.querySelector('#student_name').value
 
       const data = {
-        coord_number,
+        student_number,
         timestamp,
-        longitude,
-        lattitude
+        total_credits,
+        student_name
       }
-      const response = await fetch('/api/coord', {
+      const response = await fetch('/api/credit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -79,16 +80,16 @@
         return
       }
 
-      document.querySelector('#coord_number').value = ''
+      document.querySelector('#student_number').value = ''
       document.querySelector('#timestamp').value = ''
-      document.querySelector('#longitude').value = ''
-      document.querySelector('#lattitude').value = ''
+      document.querySelector('#total_credits').value = ''
+      document.querySelector('#student_name').value = ''
 
-      getCoords()
+      getcredits()
     }
 
-    async function getCoords() {
-      const response = await fetch('/api/coord', {
+    async function getcredits() {
+      const response = await fetch('/api/credit', {
         method: 'GET',
         headers: {'Content-Type': 'application/json'}
       })
@@ -98,8 +99,21 @@
         return
       }
       const data = await response.json()
-      Alpine.store('coords', data);
+      Alpine.store('credits', data);
     }
+
+    function deleteStudent(credit) {
+        if (confirm(`Are you sure you want to delete ${credit.student_name}?`)) {
+          fetch(`/api/credit/${credit.student_number}`, {
+            method : 'DELETE'
+        })
+        .then(() => {
+          getcredits();
+        })
+          .catch(error => console.error(error));
+        }
+    }
+
   </script>
 </body>
 </html>
