@@ -13,7 +13,7 @@
 <body>
   <div x-data="{
     student_number: '',
-    timestamp: '',
+    timestamp:  new Date().toLocaleString(),
     total_credits: '',
     student_name: '',
     credits: []
@@ -23,7 +23,7 @@
         <label for="student_number">student Number:</label>
         <input type="text" x-model="student_number" id="student_number">
         <label for="timestamp">Timestamp:</label>
-        <input type="text" x-model="timestamp" id="timestamp">
+        <input x-model="timestamp" id="timestamp" type="text" readonly>
         <label for="total_credits">total_credits:</label>
         <input type="text" x-model="total_credits" id="total_credits">
         <label for="student_name">student_name:</label>
@@ -54,6 +54,7 @@
     </div>
   </div>
   <script>
+    console.log(new Date().toLocaleDateString());
     Alpine.store('credits', []);
     getcredits();
 
@@ -81,7 +82,7 @@
       }
 
       document.querySelector('#student_number').value = ''
-      document.querySelector('#timestamp').value = ''
+      document.querySelector('#timestamp').value = new Date().toLocaleString()
       document.querySelector('#total_credits').value = ''
       document.querySelector('#student_name').value = ''
 
